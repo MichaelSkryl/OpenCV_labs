@@ -1,4 +1,4 @@
-#include "src/Lab4.h"
+﻿#include "src/Lab4.h"
 
 
 int main() {
@@ -7,8 +7,8 @@ int main() {
     cv::Mat magn, complex;
     image = cv::imread("steinbeck.jpg", cv::IMREAD_GRAYSCALE);
     cv::imshow("Original", image);
-    plate = cv::imread("plate2.jpg", cv::IMREAD_GRAYSCALE);
-    letter = cv::imread("Letter2.png", cv::IMREAD_GRAYSCALE);
+    plate = cv::imread("portrait.jpg", cv::IMREAD_GRAYSCALE);
+    letter = cv::imread("glaza.png", cv::IMREAD_GRAYSCALE);
     cv::imshow("Original", image);
     cv::waitKey(0);
     image1 = image.clone();
