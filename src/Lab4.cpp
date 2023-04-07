@@ -1,10 +1,10 @@
-#include "Lab4.h"
+п»ї#include "Lab4.h"
 
-void computeDFT(const cv::Mat& image, cv::Mat& complex, cv::Mat& magnitude) { //Для реализации встроенной функции
+void computeDFT(const cv::Mat& image, cv::Mat& complex, cv::Mat& magnitude) { //Р”Р»СЏ СЂРµР°Р»РёР·Р°С†РёРё РІСЃС‚СЂРѕРµРЅРЅРѕР№ С„СѓРЅРєС†РёРё
     cv::Mat padded_image;
-    int optimal_rows = cv::getOptimalDFTSize(image.rows);  //Изображение приводится к оптимальному размеру
+    int optimal_rows = cv::getOptimalDFTSize(image.rows);  //РР·РѕР±СЂР°Р¶РµРЅРёРµ РїСЂРёРІРѕРґРёС‚СЃСЏ Рє РѕРїС‚РёРјР°Р»СЊРЅРѕРјСѓ СЂР°Р·РјРµСЂСѓ
     int optimal_cols = cv::getOptimalDFTSize(image.cols);
-    //Добавляется паддинг
+    //Р”РѕР±Р°РІР»СЏРµС‚СЃСЏ РїР°РґРґРёРЅРі
     copyMakeBorder(image, padded_image, 0, optimal_rows - image.rows, 0, optimal_cols - image.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
     cv::Mat planes[] = { cv::Mat_<double>(padded_image), cv::Mat::zeros(padded_image.size(), CV_64F) };
     cv::Mat complex_image;
@@ -17,7 +17,7 @@ void computeDFT(const cv::Mat& image, cv::Mat& complex, cv::Mat& magnitude) { //
     magnitude += cv::Scalar::all(1);
     log(magnitude, magnitude);
     magnitude = magnitude(cv::Rect(0, 0, magnitude.cols & -2, magnitude.rows & -2));
-    krasivSpektr(magnitude); //Переставляются квадранты
+    krasivSpektr(magnitude); //РџРµСЂРµСЃС‚Р°РІР»СЏСЋС‚СЃСЏ РєРІР°РґСЂР°РЅС‚С‹
     cv::normalize(magnitude, magnitude, 0, 1, cv::NORM_MINMAX);
     cv::imshow("spectrum magnitude", magnitude);
 }
@@ -44,7 +44,7 @@ void krasivSpektr(cv::Mat& magI) {
 
 cv::Mat customDft(const cv::Mat& src, cv::Mat& dst, Flags flag, bool is_inverse) {
     dst = src.clone();
-    //Изображения переводятся в тип double, те, что с двумя каналами - под комплексные числа
+    //РР·РѕР±СЂР°Р¶РµРЅРёСЏ РїРµСЂРµРІРѕРґСЏС‚СЃСЏ РІ С‚РёРї double, С‚Рµ, С‡С‚Рѕ СЃ РґРІСѓРјСЏ РєР°РЅР°Р»Р°РјРё - РїРѕРґ РєРѕРјРїР»РµРєСЃРЅС‹Рµ С‡РёСЃР»Р°
     cv::Mat result(dst.rows, dst.cols, CV_64FC2);
     cv::Mat magnitude(dst.rows, dst.cols, CV_64FC1);
     cv::Mat phase(dst.rows, dst.cols, CV_64FC1);
@@ -54,29 +54,29 @@ cv::Mat customDft(const cv::Mat& src, cv::Mat& dst, Flags flag, bool is_inverse)
     if (is_inverse) {
         result = dst.clone();
     }
-    if (flag == Y_COORD) { //Если по Y, то транспонируем изображение
+    if (flag == Y_COORD) { //Р•СЃР»Рё РїРѕ Y, С‚Рѕ С‚СЂР°РЅСЃРїРѕРЅРёСЂСѓРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
         cv::transpose(dst, dst);
         result = dst.clone();
     }
     std::vector<cv::Mat> channels(2);
-    cv::split(result, channels);  //Разделяем двухканальное изображение
+    cv::split(result, channels);  //Р Р°Р·РґРµР»СЏРµРј РґРІСѓС…РєР°РЅР°Р»СЊРЅРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
     unsigned int counter = 0;
     int i = 0;
-    while (i < dst.rows) { //Для прохождения по всем строкам
+    while (i < dst.rows) { //Р”Р»СЏ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ РїРѕ РІСЃРµРј СЃС‚СЂРѕРєР°Рј
         double* ptr = dst.ptr<double>(i);
         double* real_ptr = channels[0].ptr<double>(i);
         double* imag_ptr = channels[1].ptr<double>(i);
-        double* dst_real_ptr = real.ptr<double>(i); //Указатели на изображения для хранения результата
+        double* dst_real_ptr = real.ptr<double>(i); //РЈРєР°Р·Р°С‚РµР»Рё РЅР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚Р°
         double* dst_imag_ptr = imag.ptr<double>(i);
         std::complex<double> temp_sum(0, 0);
         std::complex<double> z;
         for (int j = 0; j < dst.cols; j++) {
             if (is_inverse) {
-                z = std::complex<double>(0, 2 * PI * ((double)(counter * j) / (double)dst.cols)); //Показатель степени экспоненты
+                z = std::complex<double>(0, 2 * PI * ((double)(counter * j) / (double)dst.cols)); //РџРѕРєР°Р·Р°С‚РµР»СЊ СЃС‚РµРїРµРЅРё СЌРєСЃРїРѕРЅРµРЅС‚С‹
             } else {
-                z = std::complex<double>(0, -2 * PI * ((double)(counter * j) / (double)dst.cols)); //Для прямого преобразования меняем знак
+                z = std::complex<double>(0, -2 * PI * ((double)(counter * j) / (double)dst.cols)); //Р”Р»СЏ РїСЂСЏРјРѕРіРѕ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РјРµРЅСЏРµРј Р·РЅР°Рє
             }
-            //Данные условия необходимы только потому, что в случае со второй координатой работаем сразу с комплексными данными, костыль, наверное
+            //Р”Р°РЅРЅС‹Рµ СѓСЃР»РѕРІРёСЏ РЅРµРѕР±С…РѕРґРёРјС‹ С‚РѕР»СЊРєРѕ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ РІ СЃР»СѓС‡Р°Рµ СЃРѕ РІС‚РѕСЂРѕР№ РєРѕРѕСЂРґРёРЅР°С‚РѕР№ СЂР°Р±РѕС‚Р°РµРј СЃСЂР°Р·Сѓ СЃ РєРѕРјРїР»РµРєСЃРЅС‹РјРё РґР°РЅРЅС‹РјРё, РєРѕСЃС‚С‹Р»СЊ, РЅР°РІРµСЂРЅРѕРµ
             if (flag == Y_COORD) {
                 temp_sum += std::complex<double>(real_ptr[j], imag_ptr[j]) * exp(z);
             } else {
@@ -87,7 +87,7 @@ cv::Mat customDft(const cv::Mat& src, cv::Mat& dst, Flags flag, bool is_inverse)
                 }
             }
         }
-        if (is_inverse) { //Если обратное преобразование, делим на количество элементов
+        if (is_inverse) { //Р•СЃР»Рё РѕР±СЂР°С‚РЅРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ, РґРµР»РёРј РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ
             dst_real_ptr[counter] = temp_sum.real() / dst.cols;
             dst_imag_ptr[counter] = temp_sum.imag() / dst.cols;
         } else {
@@ -105,7 +105,7 @@ cv::Mat customDft(const cv::Mat& src, cv::Mat& dst, Flags flag, bool is_inverse)
             counter = 0;
         }
     }
-    if (flag == Y_COORD) { //Если вторая координата, то транспонируем обратно
+    if (flag == Y_COORD) { //Р•СЃР»Рё РІС‚РѕСЂР°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р°, С‚Рѕ С‚СЂР°РЅСЃРїРѕРЅРёСЂСѓРµРј РѕР±СЂР°С‚РЅРѕ
         channels[0] = real.clone();
         channels[1] = imag.clone();
         cv::transpose(channels[0], channels[0]);
@@ -151,7 +151,7 @@ void fft2d(const cv::Mat& src, cv::Mat& dst) {
 
 void getMagnitude(cv::Mat& real, cv::Mat& imag, cv::Mat& magn) {
     cv::magnitude(real, imag, magn);
-    magn += cv::Scalar::all(1); //Переводим в логарифмический масштаб
+    magn += cv::Scalar::all(1); //РџРµСЂРµРІРѕРґРёРј РІ Р»РѕРіР°СЂРёС„РјРёС‡РµСЃРєРёР№ РјР°СЃС€С‚Р°Р±
     log(magn, magn);
     cv::normalize(magn, magn, 0, 1, cv::NORM_MINMAX);
     krasivSpektr(magn);
@@ -166,57 +166,57 @@ cv::Mat fft(const cv::Mat& src, Flags flag, cv::Mat& magnitude) {
     std::vector<cv::Mat> channels(2);
     std::vector<cv::Mat> src_chan(2);
     cv::split(dst, channels);
-    if (flag == Y_COORD) { //Для второй координаты копируем каналы исходного изображения, то есть вещественную и мнимую часть
+    if (flag == Y_COORD) { //Р”Р»СЏ РІС‚РѕСЂРѕР№ РєРѕРѕСЂРґРёРЅР°С‚С‹ РєРѕРїРёСЂСѓРµРј РєР°РЅР°Р»С‹ РёСЃС…РѕРґРЅРѕРіРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ, С‚Рѕ РµСЃС‚СЊ РІРµС‰РµСЃС‚РІРµРЅРЅСѓСЋ Рё РјРЅРёРјСѓСЋ С‡Р°СЃС‚СЊ
         cv::split(src, src_chan);
         channels[0] = src_chan[0].clone();
         channels[1] = src_chan[1].clone();
-    } else { //Если это только первая координата, то мнимую часть заполняем нулями
+    } else { //Р•СЃР»Рё СЌС‚Рѕ С‚РѕР»СЊРєРѕ РїРµСЂРІР°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р°, С‚Рѕ РјРЅРёРјСѓСЋ С‡Р°СЃС‚СЊ Р·Р°РїРѕР»РЅСЏРµРј РЅСѓР»СЏРјРё
         channels[0] = src.clone();
         channels[1] = cv::Mat::zeros(src.rows, src.cols, CV_64F);
     }
     cv::merge(channels, dst);
     if (flag == Y_COORD) {
-        cv::transpose(dst, dst); //Так же, как раньше, транспонируем для преобразования по Y
+        cv::transpose(dst, dst); //РўР°Рє Р¶Рµ, РєР°Рє СЂР°РЅСЊС€Рµ, С‚СЂР°РЅСЃРїРѕРЅРёСЂСѓРµРј РґР»СЏ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РїРѕ Y
     }
     cv::Mat_<std::complex<double>> fourier(0, dst.cols);
     for (int i = 0; i < dst.rows; i++) {
         cv::Mat temp;
         cv::Mat_<std::complex<double>> four_temp(1, dst.cols);
-        cv::Mat roi = dst(cv::Rect(0, i, dst.cols, 1)); //Вырезаем из изображения одну строку
+        cv::Mat roi = dst(cv::Rect(0, i, dst.cols, 1)); //Р’С‹СЂРµР·Р°РµРј РёР· РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РѕРґРЅСѓ СЃС‚СЂРѕРєСѓ
         temp = roi.clone();
-        four_temp = recursiveFft(temp); //Отправляем строку в рекурсивный алгоритм
+        four_temp = recursiveFft(temp); //РћС‚РїСЂР°РІР»СЏРµРј СЃС‚СЂРѕРєСѓ РІ СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј
         fourier.push_back(four_temp);
     }
     if (flag == Y_COORD) {
-        cv::transpose(fourier, fourier); //Обратно транспонируем
+        cv::transpose(fourier, fourier); //РћР±СЂР°С‚РЅРѕ С‚СЂР°РЅСЃРїРѕРЅРёСЂСѓРµРј
     }
     std::vector<cv::Mat> planes(2);
     cv::split(fourier, planes);
     getMagnitude(planes[0], planes[1], magnitude);
-    return fourier; //Возвращаем комплексный результат
+    return fourier; //Р’РѕР·РІСЂР°С‰Р°РµРј РєРѕРјРїР»РµРєСЃРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚
 }
 
 cv::Mat recursiveFft(cv::Mat& src) {
     unsigned int N = src.cols;
     cv::Mat_<std::complex<double>> even_res(src.rows, src.cols);
     cv::Mat_<std::complex<double>> odd_res(src.rows, src.cols);
-    cv::Mat_<std::complex<double>> even(src.rows, src.cols / 2); //Для хранения четных индексов
-    cv::Mat_<std::complex<double>> odd(src.rows, src.cols / 2);  //Для нечетных
+    cv::Mat_<std::complex<double>> even(src.rows, src.cols / 2); //Р”Р»СЏ С…СЂР°РЅРµРЅРёСЏ С‡РµС‚РЅС‹С… РёРЅРґРµРєСЃРѕРІ
+    cv::Mat_<std::complex<double>> odd(src.rows, src.cols / 2);  //Р”Р»СЏ РЅРµС‡РµС‚РЅС‹С…
 
-    if (N == 1) { //Если осталась одна компонента, то возвращаем ее
+    if (N == 1) { //Р•СЃР»Рё РѕСЃС‚Р°Р»Р°СЃСЊ РѕРґРЅР° РєРѕРјРїРѕРЅРµРЅС‚Р°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµРј РµРµ
         return src;
     } else {
         std::complex<double> z = std::complex<double>(0, -2 * PI / (double)N);
-        std::complex<double> w_k = exp(z); //Вычисляем коэффициент Wk
+        std::complex<double> w_k = exp(z); //Р’С‹С‡РёСЃР»СЏРµРј РєРѕСЌС„С„РёС†РёРµРЅС‚ Wk
         std::complex<double> w = std::complex<double>(1, 0);
         std::complex<double>* ptr = src.ptr<std::complex<double>>(0);
         std::complex<double>* even_ptr = even.ptr<std::complex<double>>(0);
         std::complex<double>* odd_ptr = odd.ptr<std::complex<double>>(0);
-        for (size_t i = 0; i < (N / 2); i++) { //Разделяем на четные и нечетные
+        for (size_t i = 0; i < (N / 2); i++) { //Р Р°Р·РґРµР»СЏРµРј РЅР° С‡РµС‚РЅС‹Рµ Рё РЅРµС‡РµС‚РЅС‹Рµ
             even_ptr[i] = ptr[2 * i];
             odd_ptr[i] = ptr[2 * i + 1];
         }
-        even_res = recursiveFft(even); //Запускаем рекурсивный алгоритм для каждой из частей
+        even_res = recursiveFft(even); //Р—Р°РїСѓСЃРєР°РµРј СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј РґР»СЏ РєР°Р¶РґРѕР№ РёР· С‡Р°СЃС‚РµР№
         odd_res = recursiveFft(odd);
 
         cv::Mat_<std::complex<double>> result = cv::Mat_<std::complex<double>>::zeros(cv::Size2i(src.cols, src.rows));
@@ -224,7 +224,7 @@ cv::Mat recursiveFft(cv::Mat& src) {
         std::complex<double>* result_ptr = result.ptr<std::complex<double>>(0);
         std::complex<double>* even_res_ptr = even_res.ptr<std::complex<double>>(0);
         std::complex<double>* odd_res_ptr = odd_res.ptr<std::complex<double>>(0);
-        for (unsigned int i = 0; i < N / 2; i++) { //Получение значений фурье преобразования
+        for (unsigned int i = 0; i < N / 2; i++) { //РџРѕР»СѓС‡РµРЅРёРµ Р·РЅР°С‡РµРЅРёР№ С„СѓСЂСЊРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
             result_ptr[i] = even_res_ptr[i] + w * odd_res_ptr[i];
             result_ptr[i + N / 2] = even_res_ptr[i] - w * odd_res_ptr[i];
             w *= w_k;
@@ -241,7 +241,7 @@ void imageFiltering(const cv::Mat& src, Filters name) {
                                 {-2, 0, 2},
                                 {-1, 0, 1} };
     double sob_y_kern[3][3] = { { 1, 2, 1},
-                                { 0, 0, 0},         //Задаем ядра фильтров
+                                { 0, 0, 0},         //Р—Р°РґР°РµРј СЏРґСЂР° С„РёР»СЊС‚СЂРѕРІ
                                 {-1,-2,-1} };
     double box_kern[3][3] = { {1, 1, 1},
                               {1, 1, 1},
@@ -270,23 +270,23 @@ void imageFiltering(const cv::Mat& src, Filters name) {
 
     int proper_rows = 0;
     int proper_cols = 0;
-    proper_rows = src.rows + kernel.rows - 1; //Необходимое значение строк и столбцов для предотвращения перехлеста согласно учебнику Гонсалес, Вудс
+    proper_rows = src.rows + kernel.rows - 1; //РќРµРѕР±С…РѕРґРёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ СЃС‚СЂРѕРє Рё СЃС‚РѕР»Р±С†РѕРІ РґР»СЏ РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёСЏ РїРµСЂРµС…Р»РµСЃС‚Р° СЃРѕРіР»Р°СЃРЅРѕ СѓС‡РµР±РЅРёРєСѓ Р“РѕРЅСЃР°Р»РµСЃ, Р’СѓРґСЃ
     proper_cols = src.cols + kernel.cols - 1;
-    getPaddedImage(src, padded_image, proper_rows, proper_cols); //Дополняем нулями изображение и фильтр
+    getPaddedImage(src, padded_image, proper_rows, proper_cols); //Р”РѕРїРѕР»РЅСЏРµРј РЅСѓР»СЏРјРё РёР·РѕР±СЂР°Р¶РµРЅРёРµ Рё С„РёР»СЊС‚СЂ
     cv::copyMakeBorder(kernel, padded_kernel, 0, padded_image.rows - kernel.rows, 0, padded_image.cols - kernel.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
-    getComplexImage(padded_image, complex_image); //Переводим изображение в вид комплескного, то есть с двумя каналами
+    getComplexImage(padded_image, complex_image); //РџРµСЂРµРІРѕРґРёРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РІ РІРёРґ РєРѕРјРїР»РµСЃРєРЅРѕРіРѕ, С‚Рѕ РµСЃС‚СЊ СЃ РґРІСѓРјСЏ РєР°РЅР°Р»Р°РјРё
     getComplexImage(padded_kernel, complex_kernel);
 
     cv::Mat image_magn, filter_magn;
     cv::Mat convolution, result;
-    dft(complex_image, complex_image); //Фурье образ изображения
+    dft(complex_image, complex_image); //Р¤СѓСЂСЊРµ РѕР±СЂР°Р· РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
     showMagnitude(complex_image, image_magn, "Image magnitude");
-    dft(complex_kernel, complex_kernel); //Фурье образ ядра фильтра
-    showMagnitude(complex_kernel, filter_magn, "Filter magnitude"); //Отображаем их магнитуды
-    cv::mulSpectrums(complex_image, complex_kernel, convolution, 0); //Производим свертку
-    dft(convolution, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //Обратное ДПФ для получения результата
+    dft(complex_kernel, complex_kernel); //Р¤СѓСЂСЊРµ РѕР±СЂР°Р· СЏРґСЂР° С„РёР»СЊС‚СЂР°
+    showMagnitude(complex_kernel, filter_magn, "Filter magnitude"); //РћС‚РѕР±СЂР°Р¶Р°РµРј РёС… РјР°РіРЅРёС‚СѓРґС‹
+    cv::mulSpectrums(complex_image, complex_kernel, convolution, 0); //РџСЂРѕРёР·РІРѕРґРёРј СЃРІРµСЂС‚РєСѓ
+    dft(convolution, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //РћР±СЂР°С‚РЅРѕРµ Р”РџР¤ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚Р°
 
-    cv::Mat cropped = result(cv::Rect(0, 0, src.cols, src.rows)).clone(); //Обрезаем изображение до исходного
+    cv::Mat cropped = result(cv::Rect(0, 0, src.cols, src.rows)).clone(); //РћР±СЂРµР·Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РґРѕ РёСЃС…РѕРґРЅРѕРіРѕ
     if (name == Box) {
         cv::normalize(cropped, cropped, 0, 1, cv::NORM_MINMAX);
     } else {
@@ -298,7 +298,7 @@ void imageFiltering(const cv::Mat& src, Filters name) {
     cv::waitKey(0);
 }
 
-void showMagnitude(cv::Mat& complex_image, cv::Mat& magnitude, cv::String window_name) { //Для отображения магнитуд
+void showMagnitude(cv::Mat& complex_image, cv::Mat& magnitude, cv::String window_name) { //Р”Р»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РјР°РіРЅРёС‚СѓРґ
     std::vector<cv::Mat> channels(2);
     split(complex_image, channels);
     cv::magnitude(channels[0], channels[1], channels[0]);
@@ -313,12 +313,12 @@ void showMagnitude(cv::Mat& complex_image, cv::Mat& magnitude, cv::String window
     cv::imshow(window_name, magnitude);
 }
 
-void getComplexImage(const cv::Mat& src, cv::Mat& complex) { //Для перевода в двухканальное
+void getComplexImage(const cv::Mat& src, cv::Mat& complex) { //Р”Р»СЏ РїРµСЂРµРІРѕРґР° РІ РґРІСѓС…РєР°РЅР°Р»СЊРЅРѕРµ
     cv::Mat channels[] = { cv::Mat_<double>(src), cv::Mat::zeros(src.size(), CV_64F) };
     cv::merge(channels, 2, complex);
 }
 
-void getPaddedImage(const cv::Mat& src, cv::Mat& padded_image, int proper_rows, int proper_cols) { //Для получения дополненных изображений
+void getPaddedImage(const cv::Mat& src, cv::Mat& padded_image, int proper_rows, int proper_cols) { //Р”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РґРѕРїРѕР»РЅРµРЅРЅС‹С… РёР·РѕР±СЂР°Р¶РµРЅРёР№
     int bottom, right;
     int optimal_rows = cv::getOptimalDFTSize(proper_rows);
     int optimal_cols = cv::getOptimalDFTSize(proper_cols);
@@ -327,16 +327,16 @@ void getPaddedImage(const cv::Mat& src, cv::Mat& padded_image, int proper_rows, 
     cv::copyMakeBorder(src, padded_image, 0, bottom, 0, right, cv::BORDER_CONSTANT, cv::Scalar::all(0));
 }
 
-void lowHighPassFilters(const cv::Mat& src, Type filter) { //Фильтры высоких/низких частот
+void lowHighPassFilters(const cv::Mat& src, Type filter) { //Р¤РёР»СЊС‚СЂС‹ РІС‹СЃРѕРєРёС…/РЅРёР·РєРёС… С‡Р°СЃС‚РѕС‚
     cv::Mat magnitude, complex_image, complex_image_high;
     cv::Mat mask = cv::Mat::zeros(src.rows, src.cols, CV_64FC2);
     cv::Mat result;
     cv::Mat image = src.clone();
     cv::Mat planes[] = { cv::Mat_<double>(image), cv::Mat::zeros(image.size(), CV_64F) };
-    merge(planes, 2, complex_image); //Создаем двухканальное изображение
-    dft(complex_image, complex_image); //Получаем Фурье-образ
+    merge(planes, 2, complex_image); //РЎРѕР·РґР°РµРј РґРІСѓС…РєР°РЅР°Р»СЊРЅРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
+    dft(complex_image, complex_image); //РџРѕР»СѓС‡Р°РµРј Р¤СѓСЂСЊРµ-РѕР±СЂР°Р·
     krasivSpektr(complex_image);
-    if (filter == high_pass) { //Обрезаем высокие либо низкие частоты
+    if (filter == high_pass) { //РћР±СЂРµР·Р°РµРј РІС‹СЃРѕРєРёРµ Р»РёР±Рѕ РЅРёР·РєРёРµ С‡Р°СЃС‚РѕС‚С‹
         cv::circle(complex_image, cv::Point(complex_image.cols / 2, complex_image.rows / 2), 20, cv::Scalar::all(0), -1);
     } else {
         complex_image_high = complex_image.clone();
@@ -346,20 +346,20 @@ void lowHighPassFilters(const cv::Mat& src, Type filter) { //Фильтры высоких/низ
     }
     std::vector<cv::Mat> channels(2);
     cv::split(complex_image, channels);
-    cv::magnitude(channels[0], channels[1], magnitude); //Собираем изображение обратно, отображаем измененную магнитуду
+    cv::magnitude(channels[0], channels[1], magnitude); //РЎРѕР±РёСЂР°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РѕР±СЂР°С‚РЅРѕ, РѕС‚РѕР±СЂР°Р¶Р°РµРј РёР·РјРµРЅРµРЅРЅСѓСЋ РјР°РіРЅРёС‚СѓРґСѓ
     magnitude += cv::Scalar::all(1);
     log(magnitude, magnitude);
     cv::normalize(magnitude, magnitude, 0, 1, cv::NORM_MINMAX);
     cv::imshow("Filter", magnitude);
     cv::merge(channels, complex_image);
     krasivSpektr(complex_image);
-    dft(complex_image, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //Обратное ДПФ для получения результата
+    dft(complex_image, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //РћР±СЂР°С‚РЅРѕРµ Р”РџР¤ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚Р°
     result.convertTo(result, CV_8U);
     cv::imshow("Output", result);
     cv::waitKey(0);
 }
 
-void matchTemplate(const cv::Mat& src, const cv::Mat& temp) { //Для поиска номеров и глаз
+void matchTemplate(const cv::Mat& src, const cv::Mat& temp) { //Р”Р»СЏ РїРѕРёСЃРєР° РЅРѕРјРµСЂРѕРІ Рё РіР»Р°Р·
     cv::Mat padded_image, padded_template;
     cv::Mat complex_image, complex_template;
     cv::Mat image_sub, template_sub;
@@ -369,35 +369,35 @@ void matchTemplate(const cv::Mat& src, const cv::Mat& temp) { //Для поиска номер
 
     src.convertTo(image_sub, CV_64F);
     temp.convertTo(template_sub, CV_64F);
-    image_mean = cv::mean(image_sub); //Вычисляем среднее значение интенсивности для изображения и шаблона
+    image_mean = cv::mean(image_sub); //Р’С‹С‡РёСЃР»СЏРµРј СЃСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ РёРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚Рё РґР»СЏ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Рё С€Р°Р±Р»РѕРЅР°
     template_mean = cv::mean(template_sub);
-    cv::subtract(image_sub, image_mean, image_sub); //Вычитаем среднее
+    cv::subtract(image_sub, image_mean, image_sub); //Р’С‹С‡РёС‚Р°РµРј СЃСЂРµРґРЅРµРµ
     cv::subtract(template_sub, template_mean, template_sub);
 
     int proper_rows = 0;
     int proper_cols = 0;
-    proper_rows = src.rows + temp.rows - 1; //Минимально необходимое значение строк и столбцов для предотвращения перехлеста
+    proper_rows = src.rows + temp.rows - 1; //РњРёРЅРёРјР°Р»СЊРЅРѕ РЅРµРѕР±С…РѕРґРёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ СЃС‚СЂРѕРє Рё СЃС‚РѕР»Р±С†РѕРІ РґР»СЏ РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёСЏ РїРµСЂРµС…Р»РµСЃС‚Р°
     proper_cols = src.cols + temp.cols - 1;
-    getPaddedImage(image_sub, padded_image, proper_rows, proper_cols); //Дополняем изображения нулями
+    getPaddedImage(image_sub, padded_image, proper_rows, proper_cols); //Р”РѕРїРѕР»РЅСЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РЅСѓР»СЏРјРё
     cv::copyMakeBorder(template_sub, padded_template, 0, padded_image.rows - temp.rows, 0, padded_image.cols - temp.cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
-    getComplexImage(padded_image, complex_image); //Получаем двухканальные изображения
+    getComplexImage(padded_image, complex_image); //РџРѕР»СѓС‡Р°РµРј РґРІСѓС…РєР°РЅР°Р»СЊРЅС‹Рµ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
     getComplexImage(padded_template, complex_template);
 
     cv::Mat image_magn, filter_magn;
     cv::Mat correlation, result;
-    dft(complex_image, complex_image); //Получение Фурье-образов изображения и шаблона
+    dft(complex_image, complex_image); //РџРѕР»СѓС‡РµРЅРёРµ Р¤СѓСЂСЊРµ-РѕР±СЂР°Р·РѕРІ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Рё С€Р°Р±Р»РѕРЅР°
     dft(complex_template, complex_template);
-    cv::mulSpectrums(complex_image, complex_template, correlation, 0, true); //Корреляция, флаг в конце - комплексно-сопряженный фурье-образ шаблюона
-    dft(correlation, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //Обратное преобразование для получения результата корреляции
+    cv::mulSpectrums(complex_image, complex_template, correlation, 0, true); //РљРѕСЂСЂРµР»СЏС†РёСЏ, С„Р»Р°Рі РІ РєРѕРЅС†Рµ - РєРѕРјРїР»РµРєСЃРЅРѕ-СЃРѕРїСЂСЏР¶РµРЅРЅС‹Р№ С„СѓСЂСЊРµ-РѕР±СЂР°Р· С€Р°Р±Р»СЋРѕРЅР°
+    dft(correlation, result, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT | cv::DFT_SCALE); //РћР±СЂР°С‚РЅРѕРµ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚Р° РєРѕСЂСЂРµР»СЏС†РёРё
 
-    cv::Mat cropped = result(cv::Rect(0, 0, src.cols, src.rows)).clone(); //Обрезаем до исходных размеров
+    cv::Mat cropped = result(cv::Rect(0, 0, src.cols, src.rows)).clone(); //РћР±СЂРµР·Р°РµРј РґРѕ РёСЃС…РѕРґРЅС‹С… СЂР°Р·РјРµСЂРѕРІ
     cv::normalize(cropped, cropped, 0, 1, cv::NORM_MINMAX);
 
     double min = 0;
     double max = 0;
     cv::Mat found;
     cv::minMaxLoc(cropped, &min, &max);
-    cv::threshold(cropped, found, max - 0.02, max, cv::THRESH_BINARY); //Пороговое разделение для нахождения самых ярких областей - искомых
+    cv::threshold(cropped, found, max - 0.02, max, cv::THRESH_BINARY); //РџРѕСЂРѕРіРѕРІРѕРµ СЂР°Р·РґРµР»РµРЅРёРµ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ СЃР°РјС‹С… СЏСЂРєРёС… РѕР±Р»Р°СЃС‚РµР№ - РёСЃРєРѕРјС‹С…
     cv::namedWindow("Result", cv::WINDOW_AUTOSIZE);
     cv::moveWindow("Result", 40, 40);
     cv::imshow("Result", cropped);
