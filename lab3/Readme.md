@@ -46,5 +46,5 @@ https://user-images.githubusercontent.com/90468326/231848077-44fe20cc-24e8-4cf5-
 
 Реализована функция ValidateKeys в файле wrench.cpp. Сначала при помощи пороговой сегментации находятся бинарные изображения ключей, определяются их контуры, затем поочередно сравниваются с шабюлоном и разделяются на подходящие и неподходящие в зависимости от степени схожести.
 
-![Task4](https://user-images.githubusercontent.com/90468326/231850709-4a8cd6bd-76ef-4efc-90ee-1aa446ce95b5.jpg)
+![Task4](https://user-images.githubusercontent.com/90468326/231850880-d7f68ff8-f374-4908-8951-c0a5c7a2dd82.jpg)
 
