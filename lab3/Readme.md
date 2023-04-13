@@ -11,7 +11,7 @@
 Пример работы на видео:
 
 
-https://user-images.githubusercontent.com/90468326/231848016-8080086f-c3f8-4015-bef0-88871e9b6ac7.mp4
+https://user-images.githubusercontent.com/90468326/231848798-01fb1bd3-6b09-4479-b28d-c8077f018de7.mp4
 
 
 ### Задание 2
