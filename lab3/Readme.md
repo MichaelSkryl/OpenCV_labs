@@ -37,6 +37,7 @@ P.S. Когда загрузил сюда видео, понял, что слу�
 
 
 https://user-images.githubusercontent.com/90468326/231848077-44fe20cc-24e8-4cf5-82ad-1cabc112f8aa.mp4
+
 ![gyuw4](https://user-images.githubusercontent.com/90468326/232027804-8b246d47-8296-4abc-a58a-910f1066c0b7.png)
 
 
