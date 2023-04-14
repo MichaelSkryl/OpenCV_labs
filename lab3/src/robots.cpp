@@ -16,13 +16,13 @@ void FindRobots(const cv::Mat& src, cv::Mat& dst) {
 	cv::dilate(red_binary, red_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(18, 12)));
 	std::vector<std::vector<cv::Point>> red_countours, green_countours, blue_countours;
 	DetermineTeam(dst, red_binary, red_countours, red);	//Обводим красную команду
-	cv::inRange(temp, cv::Vec3b(45, 90, 90), cv::Vec3b(79, 255, 255), green_binary); //Отделяем зеленых роботов
-	cv::erode(green_binary, green_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
-	cv::dilate(green_binary, green_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10))); //Убираем очевидные ошибочные вещи
+	cv::inRange(temp, cv::Vec3b(60, 40, 0), cv::Vec3b(79, 255, 255), green_binary); //Отделяем зеленых роботов
+	cv::erode(green_binary, green_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15)));
+	cv::dilate(green_binary, green_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15))); //Убираем очевидные ошибочные вещи
 	DetermineTeam(dst, green_binary, green_countours, green);
-	cv::inRange(temp, cv::Vec3b(80, 100, 100), cv::Vec3b(120, 255, 255), blue_binary);	//То же самое для голубой команды
-	cv::erode(blue_binary, blue_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
-	cv::dilate(blue_binary, blue_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(10, 10)));
+	cv::inRange(temp, cv::Vec3b(80, 40, 0), cv::Vec3b(120, 255, 255), blue_binary);	//То же самое для голубой команды
+	cv::erode(blue_binary, blue_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15)));
+	cv::dilate(blue_binary, blue_binary, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15)));
 	DetermineTeam(dst, blue_binary, blue_countours, blue);
 	FindClosest(dst, red_countours, lamp_center);		//Находим ближайших
 	FindClosest(dst, green_countours, lamp_center);
@@ -64,7 +64,7 @@ void DetermineTeam(cv::Mat& src, cv::Mat& dst, std::vector<std::vector<cv::Point
 	}
 }
 
-/*void DeleteSmallCountours(std::vector<std::vector<cv::Point>>& countours) {
+void DeleteSmallCountours(std::vector<std::vector<cv::Point>>& countours) {
 	for (auto iter = countours.begin(); iter != countours.end(); ) {
 		if ((*iter).size() < 50) {
 			iter = countours.erase(iter);
@@ -72,7 +72,7 @@ void DetermineTeam(cv::Mat& src, cv::Mat& dst, std::vector<std::vector<cv::Point
 			iter++;
 		}
 	}
-}*/
+}
 
 void FindClosest(cv::Mat& image, const std::vector<std::vector<cv::Point>>& countours, const std::vector<cv::Point2i>& lamp_center) {
 	std::vector<cv::Point2i> centers;
