@@ -36,7 +36,32 @@ https://user-images.githubusercontent.com/90468326/231848798-01fb1bd3-6b09-4479-
 P.S. Когда загрузил сюда видео, понял, что случайно программа для записи экрана записала музыку, которая играла на фоне.
 
 
+Поправил детекцию: для наглядности, подряд идут по две фотографии одной и той же сцены. На первой роботы не находятся, на второй находятся.
+
+![Old_1](https://user-images.githubusercontent.com/90468326/232059252-aa858245-cf0c-42de-9fe5-08ce868de047.png)
+![New_1](https://user-images.githubusercontent.com/90468326/232059293-91900635-429d-4130-a141-c8ee8c98c153.png)
+
+![Old_2](https://user-images.githubusercontent.com/90468326/232059327-e85bcfe6-4f83-4ca1-bca3-e5e38108aa93.png)
+![New_2](https://user-images.githubusercontent.com/90468326/232059356-2ae1ea09-eb86-4eba-b0b6-77204f9927f0.png)
+
+![Old_3](https://user-images.githubusercontent.com/90468326/232059384-47be843f-bfae-4693-aebe-e7122e0629a5.png)
+![New_3](https://user-images.githubusercontent.com/90468326/232059409-60924ea9-7a81-4801-b370-6a649ba1a9e6.png)
+
+![Old_4](https://user-images.githubusercontent.com/90468326/232059431-0d9ddfb8-696e-4b37-870c-ba566cbf8255.png)
+![New_4](https://user-images.githubusercontent.com/90468326/232059459-fab11d47-42d7-4fd8-8248-f60d4db3dfc7.png)
+
+![Old_5](https://user-images.githubusercontent.com/90468326/232059535-59ea54b7-65cf-430e-8c27-17d75ebd5ca6.png)
+![New_5](https://user-images.githubusercontent.com/90468326/232059546-629baff6-de68-460f-9b25-3fe3d6409b16.png)
+
+Старое видео:
 https://user-images.githubusercontent.com/90468326/231848077-44fe20cc-24e8-4cf5-82ad-1cabc112f8aa.mp4
+
+Исправленное:
+
+
+https://user-images.githubusercontent.com/90468326/232060377-fd8127fc-79e8-43cf-b54d-e733cd4dd9b5.mp4
+
+
 
 ![gyuw4](https://user-images.githubusercontent.com/90468326/232027804-8b246d47-8296-4abc-a58a-910f1066c0b7.png)
 
@@ -48,5 +73,8 @@ https://user-images.githubusercontent.com/90468326/231848077-44fe20cc-24e8-4cf5-
 
 Реализована функция ValidateKeys в файле wrench.cpp. Сначала при помощи пороговой сегментации находятся бинарные изображения ключей, определяются их контуры, затем поочередно сравниваются с шабюлоном и разделяются на подходящие и неподходящие в зависимости от степени схожести.
 
+
 ![Task4](https://user-images.githubusercontent.com/90468326/231850880-d7f68ff8-f374-4908-8951-c0a5c7a2dd82.jpg)
+
+Исправленное видео:
 
